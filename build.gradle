@@ -1,0 +1,24 @@
+plugins {
+    id 'io.freefair.lombok' version '4.1.6'
+    id 'io.spring.dependency-management' version '1.0.9.RELEASE'
+    id 'org.springframework.boot' version '2.2.4.RELEASE'
+}
+
+subprojects {
+    apply plugin: 'io.spring.dependency-management'
+    apply plugin: 'io.freefair.lombok'
+
+    repositories {
+        jcenter()
+        mavenCentral()
+        maven {
+            url 'https://repo.spring.io/milestone'
+        }
+    }
+
+    dependencyManagement {
+        imports {
+            mavenBom("org.springframework.boot:spring-boot-dependencies:2.2.2.RELEASE")
+        }
+    }
+}

@@ -1,0 +1,11 @@
+plugins {
+    id 'java'
+}
+
+dependencies {
+	implementation 'com.jmethods:catatumbo:2.7.0'
+    implementation 'org.springframework:spring-context'
+    implementation 'com.squareup.retrofit2:retrofit:2.6.2'
+    implementation 'com.squareup.retrofit2:converter-jackson:2.7.1'
+    implementation 'com.jakewharton.retrofit:retrofit2-reactor-adapter:2.1.0'
+}
