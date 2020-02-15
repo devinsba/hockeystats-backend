@@ -99,3 +99,4 @@ jobs:
         uses: benjlevesque/actions-docker-gcr/push@master
         env:
           GCLOUD_SERVICE_ACCOUNT_KEY: ${{ secrets.GCLOUD_SERVICE_ACCOUNT_KEY }}
+          IMAGE: hockeystats-me-dev/nhl-job-seasons
