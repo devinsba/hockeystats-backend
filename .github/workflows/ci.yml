@@ -56,7 +56,7 @@ jobs:
       - name: Log into registry
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login docker.pkg.github.com -u ${{ github.actor }} --password-stdin
 
-      - name: Push image
+      - name: Push image to Github
         run: |
           IMAGE_ID=docker.pkg.github.com/devinsba/hockeystats-backend/nhl-job-seasons
 
@@ -75,3 +75,27 @@ jobs:
           docker images
           docker tag $IMAGE_ID $IMAGE_ID:$VERSION
           docker push $IMAGE_ID:$VERSION
+
+      - name: Retag for ECR
+        run: |
+          IMAGE_ID=docker.pkg.github.com/devinsba/hockeystats-backend/nhl-job-seasons
+          GCR_IMAGE_ID=gcr.io/hockeystats-me-dev/nhl-job-seasons
+
+          TAG=$GITHUB_SHA
+
+          # Strip git ref prefix from version
+          VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
+
+          # Strip "v" prefix from tag name
+          [[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
+
+          # Use Docker `latest` tag convention
+          [ "$VERSION" == "master" ] && VERSION=latest
+
+          docker tag $GCR_IMAGE_ID:$TAG $IMAGE_ID:$VERSION
+          docker tag $GCR_IMAGE_ID $IMAGE_ID:$VERSION
+
+      - name: Push to ECR
+        uses: benjlevesque/actions-docker-gcr/push@master
+        env:
+          GCLOUD_SERVICE_ACCOUNT_KEY: ${{ secrets.GCLOUD_SERVICE_ACCOUNT_KEY }}
