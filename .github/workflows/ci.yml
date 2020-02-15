@@ -92,8 +92,8 @@ jobs:
           # Use Docker `latest` tag convention
           [ "$VERSION" == "master" ] && VERSION=latest
 
-          docker tag $GCR_IMAGE_ID:$TAG $IMAGE_ID:$VERSION
-          docker tag $GCR_IMAGE_ID $IMAGE_ID:$VERSION
+          docker tag $IMAGE_ID:$VERSION $GCR_IMAGE_ID:$TAG
+          docker tag $IMAGE_ID:$VERSION $GCR_IMAGE_ID
 
       - name: Push to ECR
         uses: benjlevesque/actions-docker-gcr/push@master
