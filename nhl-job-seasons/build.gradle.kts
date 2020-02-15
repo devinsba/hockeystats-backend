@@ -15,7 +15,7 @@ java.sourceCompatibility = JavaVersion.VERSION_11
 
 jib {
     to {
-        image = "gcr.io/my-gcp-project/my-app"
+        image = "docker.pkg.github.com/devinsba/hockeystats-backend/nhl-job-seasons"
     }
 	container {
 		mainClass = "me.hockeystats.nhl.job.seasons.NhlJobSeasonsApplicationKt"
