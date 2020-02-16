@@ -2,6 +2,7 @@ package me.hockeystats.nhl.job.seasons;
 
 import me.hockeystats.nhl.api.stats.StatsApi;
 import me.hockeystats.nhl.season.Seasons;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
@@ -12,6 +13,7 @@ class Handler {
     private final StatsApi statsApi;
     private final Seasons seasons;
 
+    @Autowired
     Handler(StatsApi statsApi, Seasons seasons) {
         this.statsApi = statsApi;
         this.seasons = seasons;

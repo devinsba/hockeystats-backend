@@ -13,14 +13,14 @@ import retrofit2.converter.jackson.JacksonConverterFactory;
 
 @Configuration
 public class CommonConfiguration {
-    @Bean
-    EntityManager entityManager() {
+
+    public EntityManager entityManager() {
         EntityManagerFactory emf = EntityManagerFactory.getInstance();
         return emf.createDefaultEntityManager();
     }
 
     @Bean
-    StatsApi nhlStatsApi(ObjectMapper objectMapper) {
+    public StatsApi nhlStatsApi(ObjectMapper objectMapper) {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("https://statsapi.web.nhl.com")
                 .addCallAdapterFactory(ReactorCallAdapterFactory.create())
@@ -31,7 +31,7 @@ public class CommonConfiguration {
     }
 
     @Bean
-    Seasons seasons(EntityManager entityManager) {
-        return new Seasons(entityManager);
+    public Seasons seasons() {
+        return new Seasons(entityManager());
     }
 }
