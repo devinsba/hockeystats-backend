@@ -2,9 +2,7 @@ name: Deploy DEV
 
 on:
   registry_package:
-    action:
-      - published
-      - updated
+    types: [published, updated]
 
 jobs:
   build:
