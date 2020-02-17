@@ -1,10 +1,9 @@
 name: Deploy DEV
 
 on:
-  check_run:
-    types: [completed]
-  check_suite:
-    types: [completed]
+  push:
+    branches:
+      - master
 
 jobs:
   build:
