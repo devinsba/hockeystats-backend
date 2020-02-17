@@ -85,7 +85,7 @@ jobs:
 
       - run: |
           IMAGE_ID=docker.pkg.github.com/devinsba/hockeystats-backend/nhl-job-seasons
-          docker tag $IMAGE_ID:latest docker pull gcr.io/hockeystats-me-dev/nhl-job-seasons:$GITHUB_SHA
+          docker tag $IMAGE_ID:latest gcr.io/hockeystats-me-dev/nhl-job-seasons:$GITHUB_SHA
           docker push gcr.io/hockeystats-me-dev/nhl-job-seasons:$GITHUB_SHA
 
       - name: Deploy
