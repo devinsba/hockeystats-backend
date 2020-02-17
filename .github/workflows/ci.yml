@@ -1,4 +1,4 @@
-name: Java CI
+name: CI
 
 on:
   push:
@@ -64,11 +64,31 @@ jobs:
           docker tag $IMAGE_ID $IMAGE_ID:$VERSION
           docker push $IMAGE_ID:$VERSION
 
-      - uses: maxkomarychev/octions/octions/checks/update@master
-        id: complete_check
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push'
+
+    steps:
+      - uses: actions/checkout@v2
+
+      # Setup gcloud CLI
+      - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          name: Java CI
-          check_run_id: ${{ steps.create_check.outputs.id }}
-          status: completed
-          conclusion: success
+          version: '275.0.0'
+          service_account_email: ${{ secrets.GCLOUD_SERVICE_ACCOUNT_EMAIL }}
+          service_account_key: ${{ secrets.GCLOUD_SERVICE_ACCOUNT_KEY}}
+
+      # Configure gcloud CLI
+      - name: gcloud Set up
+        run: |
+          gcloud config set project hockeystats-me-dev
+
+      # Configure docker to use the gcloud command-line tool as a credential helper
+      - run: |
+          # Set up docker to authenticate
+          # via gcloud command-line tool.
+          gcloud auth configure-docker
+
+      - run: env
+      - run: echo "${{ github.ref }}"
