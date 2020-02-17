@@ -31,47 +31,29 @@ jobs:
           ${{ runner.os }}-gradle-
 
     - name: Build with Gradle
-      run: ./gradlew bootJar
+      run: ./gradlew bootJar jibDockerBuild
 
-  push:
-    needs: build
-    runs-on: ubuntu-latest
-    if: github.event_name == 'push'
+    - if: github.event_name == 'push'
+      name: Log into registry
+      run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login docker.pkg.github.com -u ${{ github.actor }} --password-stdin
 
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set up JDK 11
-        uses: actions/setup-java@v1
-        with:
-          java-version: 11
-      - uses: actions/cache@v1
-        with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
+    - if: github.event_name == 'push'
+      name: Push image to Github
+      run: |
+        IMAGE_ID=docker.pkg.github.com/devinsba/hockeystats-backend/nhl-job-seasons
 
-      - name: Build docker image
-        run: ./gradlew bootJar jibDockerBuild
-      - name: Log into registry
-        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login docker.pkg.github.com -u ${{ github.actor }} --password-stdin
+        # Strip git ref prefix from version
+        VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
 
-      - name: Push image to Github
-        run: |
-          IMAGE_ID=docker.pkg.github.com/devinsba/hockeystats-backend/nhl-job-seasons
+        # Strip "v" prefix from tag name
+        [[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
 
-          # Strip git ref prefix from version
-          VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
+        # Use Docker `latest` tag convention
+        [ "$VERSION" == "master" ] && VERSION=latest
 
-          # Strip "v" prefix from tag name
-          [[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
+        echo IMAGE_ID=$IMAGE_ID
+        echo VERSION=$VERSION
 
-          # Use Docker `latest` tag convention
-          [ "$VERSION" == "master" ] && VERSION=latest
-
-          echo IMAGE_ID=$IMAGE_ID
-          echo VERSION=$VERSION
-
-          docker images
-          docker tag $IMAGE_ID $IMAGE_ID:$VERSION
-          docker push $IMAGE_ID:$VERSION
+        docker images
+        docker tag $IMAGE_ID $IMAGE_ID:$VERSION
+        docker push $IMAGE_ID:$VERSION

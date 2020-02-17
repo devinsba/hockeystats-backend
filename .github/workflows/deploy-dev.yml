@@ -1,6 +1,10 @@
 name: Deploy DEV
 
-on: registry_package
+on:
+  registry_package:
+    action:
+      - published
+      - updated
 
 jobs:
   build:
