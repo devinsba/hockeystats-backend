@@ -48,20 +48,8 @@ jobs:
         run: |
           IMAGE_ID=docker.pkg.github.com/devinsba/hockeystats-backend/nhl-job-seasons
 
-          # Strip git ref prefix from version
-          VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
-
-          # Strip "v" prefix from tag name
-          [[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
-
-          # Use Docker `latest` tag convention
-          [ "$VERSION" == "master" ] && VERSION=latest
-
-          echo IMAGE_ID=$IMAGE_ID
-          echo VERSION=$VERSION
-
-          docker tag $IMAGE_ID $IMAGE_ID:$VERSION
-          docker push $IMAGE_ID:$VERSION
+          docker tag $IMAGE_ID $IMAGE_ID:$GITHUB_SHA
+          docker push $IMAGE_ID:$GITHUB_SHA
 
   deploy-dev:
     needs: build
@@ -91,7 +79,8 @@ jobs:
 
       - run: |
           IMAGE_ID=docker.pkg.github.com/devinsba/hockeystats-backend/nhl-job-seasons
-          docker tag $IMAGE_ID:latest gcr.io/hockeystats-me-dev/nhl-job-seasons:$GITHUB_SHA
+          docker pull $IMAGE_ID:$GITHUB_SHA
+          docker tag $IMAGE_ID:$GITHUB_SHA gcr.io/hockeystats-me-dev/nhl-job-seasons:$GITHUB_SHA
           docker push gcr.io/hockeystats-me-dev/nhl-job-seasons:$GITHUB_SHA
 
       - name: Deploy
