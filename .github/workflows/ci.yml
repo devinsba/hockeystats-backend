@@ -29,6 +29,12 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
+      - uses: actions/cache@v1
+          with:
+            path: ~/.gradle/wrapper
+            key: ${{ runner.os }}-gradle
+            restore-keys: |
+              ${{ runner.os }}-gradle
 
       - name: Build with Gradle
         run: ./gradlew bootJar jibDockerBuild
