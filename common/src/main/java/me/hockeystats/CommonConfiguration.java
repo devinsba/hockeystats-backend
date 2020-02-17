@@ -6,14 +6,24 @@ import com.jmethods.catatumbo.EntityManager;
 import com.jmethods.catatumbo.EntityManagerFactory;
 import me.hockeystats.nhl.api.stats.StatsApi;
 import me.hockeystats.nhl.season.Seasons;
+import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.support.GenericApplicationContext;
 import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
 
 @Configuration
-public class CommonConfiguration {
+public class CommonConfiguration implements ApplicationContextInitializer<GenericApplicationContext> {
 
+    @Override
+    public void initialize(GenericApplicationContext context) {
+        context.registerBean(EntityManager.class, this::entityManager);
+        context.registerBean(StatsApi.class, () -> nhlStatsApi(context.getBean(ObjectMapper.class)));
+        context.registerBean(Seasons.class, () -> seasons(context.getBean(EntityManager.class)));
+    }
+
+    @Bean
     public EntityManager entityManager() {
         EntityManagerFactory emf = EntityManagerFactory.getInstance();
         return emf.createDefaultEntityManager();
@@ -31,7 +41,7 @@ public class CommonConfiguration {
     }
 
     @Bean
-    public Seasons seasons() {
-        return new Seasons(entityManager());
+    public Seasons seasons(EntityManager entityManager) {
+        return new Seasons(entityManager);
     }
 }

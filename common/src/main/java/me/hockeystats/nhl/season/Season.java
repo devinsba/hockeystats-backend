@@ -6,7 +6,7 @@ import com.jmethods.catatumbo.Identifier;
 import com.jmethods.catatumbo.UpdatedTimestamp;
 import com.jmethods.catatumbo.Version;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import lombok.Data;
 
 @Entity
@@ -14,6 +14,8 @@ import lombok.Data;
 public class Season {
     @Identifier
     long id;
+
+    Long seasonId;
     LocalDate regularSeasonStartDate;
     LocalDate regularSeasonEndDate;
     LocalDate seasonEndDate;
@@ -25,10 +27,10 @@ public class Season {
     Boolean wildCardInUse;
 
     @CreatedTimestamp
-    LocalDateTime createdAt;
+    ZonedDateTime createdAt;
 
     @UpdatedTimestamp
-    LocalDateTime updatedAt;
+    ZonedDateTime updatedAt;
 
     @Version
     long version;
