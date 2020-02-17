@@ -77,6 +77,9 @@ jobs:
           # via gcloud command-line tool.
           gcloud auth configure-docker
 
+      - name: Log into github registry
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login docker.pkg.github.com -u ${{ github.actor }} --password-stdin
+
       - run: |
           IMAGE_ID=docker.pkg.github.com/devinsba/hockeystats-backend/nhl-job-seasons
           docker pull $IMAGE_ID:$GITHUB_SHA
