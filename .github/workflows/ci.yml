@@ -69,6 +69,6 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           name: Java CI
-          check_run_id: ${{ steps.my_step_id.outputs.id }}
+          check_run_id: ${{ steps.create_check.outputs.id }}
           status: completed
           conclusion: success
