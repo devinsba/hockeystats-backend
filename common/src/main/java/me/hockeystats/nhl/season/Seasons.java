@@ -4,6 +4,7 @@ import com.jmethods.catatumbo.EntityManager;
 import com.jmethods.catatumbo.EntityQueryRequest;
 import com.jmethods.catatumbo.QueryResponse;
 import java.util.List;
+import java.util.stream.Collectors;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -34,6 +35,6 @@ public class Seasons {
     }
 
     public Flux<Season> saveAll(Flux<Season> seasons) {
-        return Flux.fromIterable(entityManager.upsert(seasons.toIterable()));
+        return Flux.fromIterable(entityManager.upsert(seasons.toStream().collect(Collectors.toList())));
     }
 }
