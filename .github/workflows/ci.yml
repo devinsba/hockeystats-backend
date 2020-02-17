@@ -57,10 +57,10 @@ jobs:
           docker tag $IMAGE_ID $IMAGE_ID:$VERSION
           docker push $IMAGE_ID:$VERSION
 
-  deploy:
+  deploy-dev:
     needs: build
     runs-on: ubuntu-latest
-    if: github.event_name == 'push'
+    if: github.ref == 'refs/heads/master'
 
     steps:
       - uses: actions/checkout@v2
@@ -83,5 +83,14 @@ jobs:
           # via gcloud command-line tool.
           gcloud auth configure-docker
 
-      - run: env
-      - run: echo "${{ github.ref }}"
+      - run: |
+          IMAGE_ID=docker.pkg.github.com/devinsba/hockeystats-backend/nhl-job-seasons
+          docker tag $IMAGE_ID:latest docker pull gcr.io/hockeystats-me-dev/nhl-job-seasons:$GITHUB_SHA
+          docker push gcr.io/hockeystats-me-dev/nhl-job-seasons:$GITHUB_SHA
+
+      - name: Deploy
+        run: |
+          gcloud run deploy nhl-job-seasons \
+            --region us-east4 \
+            --image docker pull gcr.io/hockeystats-me-dev/nhl-job-seasons:$GITHUB_SHA \
+            --platform managed
