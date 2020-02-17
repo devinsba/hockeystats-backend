@@ -8,28 +8,27 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
-        
-    # Setup gcloud CLI
-    - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
-      with:
-        version: '275.0.0'
-        service_account_email: ${{ secrets.SA_EMAIL }}
-        service_account_key: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS}}
-    
-    # Configure gcloud CLI
-    - name: gcloud Set up
-      run: |
-        gcloud config set project hockeystats-me-dev
+      - uses: actions/checkout@v2
 
-    # Configure docker to use the gcloud command-line tool as a credential helper
-    - run: |
-        # Set up docker to authenticate
-        # via gcloud command-line tool.
-        gcloud auth configure-docker
-    
-    - run: env
+      # Setup gcloud CLI
+      - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
+        with:
+          version: '275.0.0'
+          service_account_email: ${{ secrets.SA_EMAIL }}
+          service_account_key: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS}}
+
+      # Configure gcloud CLI
+      - name: gcloud Set up
+        run: |
+          gcloud config set project hockeystats-me-dev
+
+      # Configure docker to use the gcloud command-line tool as a credential helper
+      - run: |
+          # Set up docker to authenticate
+          # via gcloud command-line tool.
+          gcloud auth configure-docker
+
+      - run: env
