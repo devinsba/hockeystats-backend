@@ -1,8 +1,6 @@
 name: Deploy DEV
 
-on:
-  registry_package:
-    types: [published, updated]
+on: [registry_package]
 
 jobs:
   build:
