@@ -15,8 +15,8 @@ jobs:
       - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
         with:
           version: '275.0.0'
-          service_account_email: ${{ secrets.SA_EMAIL }}
-          service_account_key: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS}}
+          service_account_email: ${{ secrets.GCLOUD_SERVICE_ACCOUNT_EMAIL }}
+          service_account_key: ${{ secrets.GCLOUD_SERVICE_ACCOUNT_KEY}}
 
       # Configure gcloud CLI
       - name: gcloud Set up
