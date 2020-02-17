@@ -18,6 +18,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - uses: maxkomarychev/octions/octions/checks/create@master
+        id: create_check
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          name: Java CI
+          head_sha: ${{ github.ref }}
+          status: in_progress
       - uses: actions/checkout@v2
       - name: Set up JDK 11
         uses: actions/setup-java@v1
@@ -56,3 +63,12 @@ jobs:
 
           docker tag $IMAGE_ID $IMAGE_ID:$VERSION
           docker push $IMAGE_ID:$VERSION
+
+      - uses: maxkomarychev/octions/octions/checks/update@master
+        id: complete_check
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          name: Java CI
+          check_run_id: ${{ steps.my_step_id.outputs.id }}
+          status: completed
+          conclusion: success
