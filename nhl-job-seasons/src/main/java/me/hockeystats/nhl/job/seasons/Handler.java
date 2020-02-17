@@ -26,6 +26,7 @@ class Handler {
         return statsApi.listSeasons()
                 .map(Response::body)
                 .flatMapIterable(StatsSeasons::getSeasons)
+                .parallel()
                 .flatMap(s -> seasons.findById(Long.parseLong(s.getSeasonId()))
                         .defaultIfEmpty(new Season())
                         .map(season -> {
@@ -41,7 +42,8 @@ class Handler {
                             season.setWildCardInUse(s.getWildCardInUse());
                             return season;
                         }))
-                .flatMap(seasons::save)
+                .sequential()
+                .transform(seasons::saveAll)
                 .then(ServerResponse.ok().build());
     }
 }
