@@ -90,5 +90,5 @@ jobs:
         run: |
           gcloud run deploy nhl-job-seasons \
             --region us-east4 \
-            --image docker pull gcr.io/hockeystats-me-dev/nhl-job-seasons:$GITHUB_SHA \
+            --image gcr.io/hockeystats-me-dev/nhl-job-seasons:$GITHUB_SHA \
             --platform managed
