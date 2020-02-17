@@ -24,17 +24,19 @@ jobs:
         with:
           java-version: 11
       - uses: actions/cache@v1
+        name: Gradle Dependencies Cache
         with:
           path: ~/.gradle/caches
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
       - uses: actions/cache@v1
+        name: Gradle Wrapper Cache
         with:
           path: ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradlewrapper
+          key: gradlewrapper
           restore-keys: |
-            ${{ runner.os }}-gradlewrapper
+            gradlewrapper
 
       - name: Build with Gradle
         run: ./gradlew bootJar jibDockerBuild
