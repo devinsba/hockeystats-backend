@@ -53,6 +53,11 @@ jobs:
           docker tag $IMAGE_ID $IMAGE_ID:$GITHUB_SHA
           docker push $IMAGE_ID:$GITHUB_SHA
 
+          IMAGE_ID=docker.pkg.github.com/devinsba/hockeystats-backend/nhl-job-games
+
+          docker tag $IMAGE_ID $IMAGE_ID:$GITHUB_SHA
+          docker push $IMAGE_ID:$GITHUB_SHA
+
   deploy-dev:
     needs: build
     runs-on: ubuntu-latest
@@ -88,9 +93,19 @@ jobs:
           docker tag $IMAGE_ID:$GITHUB_SHA gcr.io/hockeystats-me-dev/nhl-job-seasons:$GITHUB_SHA
           docker push gcr.io/hockeystats-me-dev/nhl-job-seasons:$GITHUB_SHA
 
+          IMAGE_ID=docker.pkg.github.com/devinsba/hockeystats-backend/nhl-job-games
+          docker pull $IMAGE_ID:$GITHUB_SHA
+          docker tag $IMAGE_ID:$GITHUB_SHA gcr.io/hockeystats-me-dev/nhl-job-games:$GITHUB_SHA
+          docker push gcr.io/hockeystats-me-dev/nhl-job-games:$GITHUB_SHA
+
       - name: Deploy
         run: |
           gcloud run deploy nhl-job-seasons \
             --region us-east4 \
             --image gcr.io/hockeystats-me-dev/nhl-job-seasons:$GITHUB_SHA \
+            --platform managed
+
+          gcloud run deploy nhl-job-games \
+            --region us-east4 \
+            --image gcr.io/hockeystats-me-dev/nhl-job-games:$GITHUB_SHA \
             --platform managed
