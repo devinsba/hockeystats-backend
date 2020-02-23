@@ -11,3 +11,4 @@ rootProject.name = 'hockeystats-backend'
 
 include "common"
 include "nhl-job-seasons"
+include "nhl-job-games"

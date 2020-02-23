@@ -5,6 +5,7 @@ import com.jakewharton.retrofit2.adapter.reactor.ReactorCallAdapterFactory;
 import com.jmethods.catatumbo.EntityManager;
 import com.jmethods.catatumbo.EntityManagerFactory;
 import me.hockeystats.nhl.api.stats.StatsApi;
+import me.hockeystats.nhl.game.Games;
 import me.hockeystats.nhl.season.Seasons;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.annotation.Bean;
@@ -20,6 +21,7 @@ public class CommonConfiguration implements ApplicationContextInitializer<Generi
     public void initialize(GenericApplicationContext context) {
         context.registerBean(EntityManager.class, this::entityManager);
         context.registerBean(StatsApi.class, () -> nhlStatsApi(context.getBean(ObjectMapper.class)));
+        context.registerBean(Games.class, () -> games(context.getBean(EntityManager.class)));
         context.registerBean(Seasons.class, () -> seasons(context.getBean(EntityManager.class)));
     }
 
@@ -43,5 +45,10 @@ public class CommonConfiguration implements ApplicationContextInitializer<Generi
     @Bean
     public Seasons seasons(EntityManager entityManager) {
         return new Seasons(entityManager);
+    }
+
+    @Bean
+    public Games games(EntityManager entityManager) {
+        return new Games(entityManager);
     }
 }
