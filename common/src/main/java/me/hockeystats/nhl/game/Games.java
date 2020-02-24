@@ -3,6 +3,7 @@ package me.hockeystats.nhl.game;
 import com.jmethods.catatumbo.EntityManager;
 import com.jmethods.catatumbo.EntityQueryRequest;
 import com.jmethods.catatumbo.QueryResponse;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import reactor.core.publisher.Flux;
@@ -37,7 +38,16 @@ public class Games {
   public Flux<Game> saveAll(Flux<Game> games) {
     return Mono.fromCallable(
             () -> {
-              List<Game> list = games.toStream().collect(Collectors.toList());
+              List<Game> list =
+                  games
+                      .toStream()
+                      .peek(
+                          g -> {
+                            if (g.getCreatedAt() == null) {
+                              g.setCreatedAt(ZonedDateTime.now());
+                            }
+                          })
+                      .collect(Collectors.toList());
               return entityManager.upsert(list);
             })
         .subscribeOn(Schedulers.elastic())
