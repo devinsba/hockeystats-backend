@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
+import java.util.function.Function;
 import me.hockeystats.nhl.api.stats.Schedule;
 import me.hockeystats.nhl.api.stats.ScheduleDate;
 import me.hockeystats.nhl.api.stats.StatsApi;
@@ -27,34 +28,46 @@ class Handler {
     this.games = games;
   }
 
-  Mono<ServerResponse> handleToday(ServerRequest request) {
-    return statsApi
-        .getScheduleForDate(LocalDate.now().toString())
-        .map(Response::body)
-        .flatMapIterable(Schedule::getDates)
-        .flatMapIterable(ScheduleDate::getGames)
-        .parallel()
-        .flatMap(
-            g ->
-                games
-                    .findById(g.getGamePk())
-                    .defaultIfEmpty(new Game())
-                    .map(
-                        game -> {
-                          game.setGameId(g.getGamePk());
-                          game.setGameType(g.getGameType());
-                          game.setSeasonId(Long.parseLong(g.getSeason()));
-                          game.setStartAt(LocalDateTime.ofInstant(g.getGameDate(), ZoneOffset.UTC));
-                          game.setVenue(g.getVenue().getName());
-                          game.setGameStatus(g.getStatus().getDetailedState());
-                          game.setAwayTeamId(g.getTeams().getAway().getTeam().getId());
-                          game.setAwayScore(g.getTeams().getAway().getScore());
-                          game.setHomeTeamId(g.getTeams().getHome().getTeam().getId());
-                          game.setHomeScore(g.getTeams().getHome().getScore());
-                          return game;
-                        }))
-        .sequential()
-        .transform(games::saveAll)
-        .then(ServerResponse.ok().build());
+  Function<ServerRequest, Mono<ServerResponse>> today() {
+    LocalDate today = LocalDate.now();
+    return forDate(today);
+  }
+
+  Function<ServerRequest, Mono<ServerResponse>> yesterday() {
+    LocalDate yesterday = LocalDate.now().minusDays(1);
+    return forDate(yesterday);
+  }
+
+  private Function<ServerRequest, Mono<ServerResponse>> forDate(LocalDate date) {
+    return (req) ->
+        statsApi
+            .getScheduleForDate(date.toString())
+            .map(Response::body)
+            .flatMapIterable(Schedule::getDates)
+            .flatMapIterable(ScheduleDate::getGames)
+            .parallel()
+            .flatMap(
+                g ->
+                    games
+                        .findById(g.getGamePk())
+                        .defaultIfEmpty(new Game())
+                        .map(
+                            game -> {
+                              game.setGameId(g.getGamePk());
+                              game.setGameType(g.getGameType());
+                              game.setSeasonId(Long.parseLong(g.getSeason()));
+                              game.setStartAt(
+                                  LocalDateTime.ofInstant(g.getGameDate(), ZoneOffset.UTC));
+                              game.setVenue(g.getVenue().getName());
+                              game.setGameStatus(g.getStatus().getDetailedState());
+                              game.setAwayTeamId(g.getTeams().getAway().getTeam().getId());
+                              game.setAwayScore(g.getTeams().getAway().getScore());
+                              game.setHomeTeamId(g.getTeams().getHome().getTeam().getId());
+                              game.setHomeScore(g.getTeams().getHome().getScore());
+                              return game;
+                            }))
+            .sequential()
+            .transform(games::saveAll)
+            .then(ServerResponse.ok().build());
   }
 }

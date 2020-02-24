@@ -21,7 +21,12 @@ val app = application(WebApplicationType.REACTIVE) {
 		port = (env.getProperty("server.port") ?: "8080").toInt()
 		router {
 			val handler = ref<Handler>()
-			GET("/", handler::handleToday)
+			GET("/") {
+				handler.today().apply(it)
+			}
+			GET("/yesterday") {
+				handler.yesterday().apply(it)
+			}
 		}
 		codecs {
 			string()
