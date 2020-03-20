@@ -13,7 +13,7 @@ dependencies {
     api 'org.springframework:spring-context:5.2.3.RELEASE'
     api 'io.projectreactor:reactor-core'
     implementation 'com.jmethods:catatumbo:2.7.0'
-    implementation 'com.squareup.retrofit2:retrofit:2.7.1'
+    implementation 'com.squareup.retrofit2:retrofit:2.7.2'
     implementation 'com.squareup.retrofit2:converter-jackson:2.7.2'
     implementation 'com.jakewharton.retrofit:retrofit2-reactor-adapter:2.1.0'
 }
