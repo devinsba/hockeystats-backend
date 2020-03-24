@@ -5,7 +5,7 @@ plugins {
 
 dependencyManagement {
     imports {
-        mavenBom "io.projectreactor:reactor-bom:Dysprosium-SR5"
+        mavenBom "io.projectreactor:reactor-bom:Dysprosium-SR6"
     }
 }
 
