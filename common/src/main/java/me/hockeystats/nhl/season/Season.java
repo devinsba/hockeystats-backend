@@ -1,8 +1,10 @@
 package me.hockeystats.nhl.season;
 
 import com.jmethods.catatumbo.CreatedTimestamp;
+import com.jmethods.catatumbo.DatastoreKey;
 import com.jmethods.catatumbo.Entity;
 import com.jmethods.catatumbo.Identifier;
+import com.jmethods.catatumbo.Key;
 import com.jmethods.catatumbo.UpdatedTimestamp;
 import com.jmethods.catatumbo.Version;
 import java.time.LocalDate;
@@ -14,6 +16,9 @@ import lombok.Data;
 public class Season {
     @Identifier
     long id;
+
+    @Key
+    DatastoreKey key;
 
     long seasonId;
     LocalDate regularSeasonStartDate;

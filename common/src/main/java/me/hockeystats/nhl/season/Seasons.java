@@ -6,6 +6,7 @@ import com.jmethods.catatumbo.QueryResponse;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
+import me.hockeystats.nhl.api.stats.Schedule;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
@@ -37,21 +38,24 @@ public class Seasons {
   }
 
   public Flux<Season> saveAll(Flux<Season> seasons) {
-    return Mono.fromCallable(
-            () -> {
-              List<Season> list =
-                  seasons
-                      .toStream()
-                      .peek(
-                          s -> {
-                            if (s.getCreatedAt() == null) {
-                              s.setCreatedAt(ZonedDateTime.now());
-                            }
-                          })
-                      .collect(Collectors.toList());
-              return entityManager.upsert(list);
+    return seasons
+        .groupBy(
+            s -> {
+              if (s.getCreatedAt() == null) {
+                return "insert";
+              } else {
+                return "update";
+              }
             })
-        .subscribeOn(Schedulers.elastic())
-        .flatMapIterable(l -> l);
+        .flatMap(
+            g -> {
+              if (g.key().equals("insert")) {
+                return Flux.from(g.collectList().map(entityManager::insert))
+                    .flatMapIterable(i -> i);
+              } else {
+                return Flux.from(g.collectList().map(entityManager::update))
+                    .flatMapIterable(i -> i);
+              }
+            });
   }
 }

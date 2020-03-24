@@ -36,21 +36,24 @@ public class Games {
   }
 
   public Flux<Game> saveAll(Flux<Game> games) {
-    return Mono.fromCallable(
-            () -> {
-              List<Game> list =
-                  games
-                      .toStream()
-                      .peek(
-                          g -> {
-                            if (g.getCreatedAt() == null) {
-                              g.setCreatedAt(ZonedDateTime.now());
-                            }
-                          })
-                      .collect(Collectors.toList());
-              return entityManager.upsert(list);
+    return games
+        .groupBy(
+            g -> {
+              if (g.getCreatedAt() == null) {
+                return "insert";
+              } else {
+                return "update";
+              }
             })
-        .subscribeOn(Schedulers.elastic())
-        .flatMapIterable(l -> l);
+        .flatMap(
+            g -> {
+              if (g.key().equals("insert")) {
+                return Flux.from(g.collectList().map(entityManager::insert))
+                    .flatMapIterable(i -> i);
+              } else {
+                return Flux.from(g.collectList().map(entityManager::update))
+                    .flatMapIterable(i -> i);
+              }
+            });
   }
 }
