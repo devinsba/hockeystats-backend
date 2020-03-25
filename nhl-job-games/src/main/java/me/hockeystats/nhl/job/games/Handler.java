@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.function.Function;
+import me.hockeystats.PubSubMessage;
 import me.hockeystats.nhl.api.stats.Schedule;
 import me.hockeystats.nhl.api.stats.ScheduleDate;
 import me.hockeystats.nhl.api.stats.StatsApi;
@@ -11,6 +12,7 @@ import me.hockeystats.nhl.game.Game;
 import me.hockeystats.nhl.game.Games;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.Base64Utils;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
@@ -35,6 +37,17 @@ class Handler {
   Function<ServerRequest, Mono<ServerResponse>> yesterday() {
     LocalDate yesterday = LocalDate.now().minusDays(1);
     return forDate(yesterday);
+  }
+
+  Function<ServerRequest, Mono<ServerResponse>> requested() {
+      return (request -> request.bodyToMono(PubSubMessage.class)
+              .map(b -> b.getMessage().getData())
+              .map(Base64Utils::decodeFromString)
+              .map(String::new)
+              .map(LocalDate::parse)
+              .map(this::forDate)
+              .map(f -> f.apply(request))
+              .flatMap(m -> m));
   }
 
   private Function<ServerRequest, Mono<ServerResponse>> forDate(LocalDate date) {

@@ -27,6 +27,9 @@ val app = application(WebApplicationType.REACTIVE) {
             GET("/yesterday") {
                 handler.yesterday().apply(it)
             }
+            POST("/") {
+                handler.requested().apply(it)
+            }
         }
         codecs {
             string()
