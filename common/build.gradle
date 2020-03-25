@@ -10,7 +10,7 @@ dependencyManagement {
 }
 
 dependencies {
-    api 'org.springframework:spring-context:5.2.4.RELEASE'
+    api 'org.springframework:spring-context:5.2.5.RELEASE'
     api 'io.projectreactor:reactor-core'
     implementation 'com.jmethods:catatumbo:2.7.0'
     implementation 'com.squareup.retrofit2:retrofit:2.8.0'
