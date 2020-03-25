@@ -2,7 +2,6 @@ package me.hockeystats.nhl.job.games;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.util.function.Function;
 import me.hockeystats.nhl.api.stats.Schedule;

@@ -15,40 +15,42 @@ import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
 
 @Configuration
-public class CommonConfiguration implements ApplicationContextInitializer<GenericApplicationContext> {
+public class CommonConfiguration
+    implements ApplicationContextInitializer<GenericApplicationContext> {
 
-    @Override
-    public void initialize(GenericApplicationContext context) {
-        context.registerBean(EntityManager.class, this::entityManager);
-        context.registerBean(StatsApi.class, () -> nhlStatsApi(context.getBean(ObjectMapper.class)));
-        context.registerBean(Games.class, () -> games(context.getBean(EntityManager.class)));
-        context.registerBean(Seasons.class, () -> seasons(context.getBean(EntityManager.class)));
-    }
+  @Override
+  public void initialize(GenericApplicationContext context) {
+    context.registerBean(EntityManager.class, this::entityManager);
+    context.registerBean(StatsApi.class, () -> nhlStatsApi(context.getBean(ObjectMapper.class)));
+    context.registerBean(Games.class, () -> games(context.getBean(EntityManager.class)));
+    context.registerBean(Seasons.class, () -> seasons(context.getBean(EntityManager.class)));
+  }
 
-    @Bean
-    public EntityManager entityManager() {
-        EntityManagerFactory emf = EntityManagerFactory.getInstance();
-        return emf.createDefaultEntityManager();
-    }
+  @Bean
+  public EntityManager entityManager() {
+    EntityManagerFactory emf = EntityManagerFactory.getInstance();
+    return emf.createDefaultEntityManager();
+  }
 
-    @Bean
-    public StatsApi nhlStatsApi(ObjectMapper objectMapper) {
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("https://statsapi.web.nhl.com")
-                .addCallAdapterFactory(ReactorCallAdapterFactory.create())
-                .addConverterFactory(JacksonConverterFactory.create(objectMapper))
-                .build();
+  @Bean
+  public StatsApi nhlStatsApi(ObjectMapper objectMapper) {
+    Retrofit retrofit =
+        new Retrofit.Builder()
+            .baseUrl("https://statsapi.web.nhl.com")
+            .addCallAdapterFactory(ReactorCallAdapterFactory.create())
+            .addConverterFactory(JacksonConverterFactory.create(objectMapper))
+            .build();
 
-        return retrofit.create(StatsApi.class);
-    }
+    return retrofit.create(StatsApi.class);
+  }
 
-    @Bean
-    public Seasons seasons(EntityManager entityManager) {
-        return new Seasons(entityManager);
-    }
+  @Bean
+  public Seasons seasons(EntityManager entityManager) {
+    return new Seasons(entityManager);
+  }
 
-    @Bean
-    public Games games(EntityManager entityManager) {
-        return new Games(entityManager);
-    }
+  @Bean
+  public Games games(EntityManager entityManager) {
+    return new Games(entityManager);
+  }
 }

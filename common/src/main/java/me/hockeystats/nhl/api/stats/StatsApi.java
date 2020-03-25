@@ -14,6 +14,6 @@ public interface StatsApi {
   Mono<Response<Schedule>> getScheduleForDate(@Query("date") String date);
 
   @GET("/api/v1/teams/{teamId}/roster")
-  Mono<Response<StatsRoster>> getTeamRoster(@Path("teamId") long teamId,
-                                            @Query("season") String seasonId);
+  Mono<Response<StatsRoster>> getTeamRoster(
+      @Path("teamId") long teamId, @Query("season") String seasonId);
 }

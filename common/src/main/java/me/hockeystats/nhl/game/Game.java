@@ -14,31 +14,21 @@ import lombok.Data;
 @Entity
 @Data
 public class Game {
-    @Identifier
-    long id;
+  @Identifier long id;
 
-    @Key
-    DatastoreKey key;
+  @Key DatastoreKey key;
 
-    long gameId;
-
-    private String gameType;
-    private long seasonId;
-    private LocalDateTime startAt;
-    private String venue;
-    private String gameStatus;
-
-    private long awayTeamId;
-    private int awayScore;
-    private long homeTeamId;
-    private int homeScore;
-
-    @CreatedTimestamp
-    ZonedDateTime createdAt;
-
-    @UpdatedTimestamp
-    ZonedDateTime updatedAt;
-
-    @Version
-    long version;
+  long gameId;
+  @CreatedTimestamp ZonedDateTime createdAt;
+  @UpdatedTimestamp ZonedDateTime updatedAt;
+  @Version long version;
+  private String gameType;
+  private long seasonId;
+  private LocalDateTime startAt;
+  private String venue;
+  private String gameStatus;
+  private long awayTeamId;
+  private int awayScore;
+  private long homeTeamId;
+  private int homeScore;
 }

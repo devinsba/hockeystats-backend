@@ -8,33 +8,33 @@ import org.springframework.fu.kofu.application
 import org.springframework.fu.kofu.webflux.webFlux
 
 val app = application(WebApplicationType.REACTIVE) {
-	beans {
-		bean<CommonConfiguration>()
-		bean {
-			Handler(ref(), ref())
-		}
-	}
-	listener<ApplicationReadyEvent> {
-		ref<CommonConfiguration>().initialize(it.applicationContext as GenericApplicationContext)
-	}
-	webFlux {
-		port = (env.getProperty("server.port") ?: "8080").toInt()
-		router {
-			val handler = ref<Handler>()
-			GET("/") {
-				handler.today().apply(it)
-			}
-			GET("/yesterday") {
-				handler.yesterday().apply(it)
-			}
-		}
-		codecs {
-			string()
-			jackson()
-		}
-	}
+    beans {
+        bean<CommonConfiguration>()
+        bean {
+            Handler(ref(), ref())
+        }
+    }
+    listener<ApplicationReadyEvent> {
+        ref<CommonConfiguration>().initialize(it.applicationContext as GenericApplicationContext)
+    }
+    webFlux {
+        port = (env.getProperty("server.port") ?: "8080").toInt()
+        router {
+            val handler = ref<Handler>()
+            GET("/") {
+                handler.today().apply(it)
+            }
+            GET("/yesterday") {
+                handler.yesterday().apply(it)
+            }
+        }
+        codecs {
+            string()
+            jackson()
+        }
+    }
 }
 
 fun main() {
-	app.run()
+    app.run()
 }

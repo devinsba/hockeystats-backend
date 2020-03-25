@@ -17,9 +17,9 @@ jib {
     to {
         image = "docker.pkg.github.com/devinsba/hockeystats-backend/nhl-job-seasons"
     }
-	container {
-		mainClass = "me.hockeystats.nhl.job.seasons.NhlJobSeasonsApplicationKt"
-	}
+    container {
+        mainClass = "me.hockeystats.nhl.job.seasons.NhlJobSeasonsApplicationKt"
+    }
 }
 
 

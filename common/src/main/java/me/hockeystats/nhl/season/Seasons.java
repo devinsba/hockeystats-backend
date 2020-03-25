@@ -3,13 +3,9 @@ package me.hockeystats.nhl.season;
 import com.jmethods.catatumbo.EntityManager;
 import com.jmethods.catatumbo.EntityQueryRequest;
 import com.jmethods.catatumbo.QueryResponse;
-import java.time.ZonedDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
-import me.hockeystats.nhl.api.stats.Schedule;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Schedulers;
 
 public class Seasons {
   private final EntityManager entityManager;
