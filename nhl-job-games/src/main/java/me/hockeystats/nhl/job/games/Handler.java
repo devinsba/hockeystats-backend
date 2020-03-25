@@ -1,8 +1,9 @@
 package me.hockeystats.nhl.job.games;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.function.Function;
 import me.hockeystats.PubSubMessage;
 import me.hockeystats.nhl.api.stats.Schedule;
@@ -69,7 +70,7 @@ class Handler {
                               game.setGameType(g.getGameType());
                               game.setSeasonId(Long.parseLong(g.getSeason()));
                               game.setStartAt(
-                                  LocalDateTime.ofInstant(g.getGameDate(), ZoneOffset.UTC));
+                                  ZonedDateTime.ofInstant(g.getGameDate(), ZoneId.of("America/New_York")));
                               game.setVenue(g.getVenue().getName());
                               game.setGameStatus(g.getStatus().getDetailedState());
                               game.setAwayTeamId(g.getTeams().getAway().getTeam().getId());

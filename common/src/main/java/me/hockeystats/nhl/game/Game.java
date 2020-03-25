@@ -1,7 +1,7 @@
 package me.hockeystats.nhl.game;
 
 import com.jmethods.catatumbo.Entity;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import lombok.Data;
 import me.hockeystats.BaseEntity;
 
@@ -11,7 +11,7 @@ public class Game extends BaseEntity {
   long gameId;
   private String gameType;
   private long seasonId;
-  private LocalDateTime startAt;
+  private ZonedDateTime startAt;
   private String venue;
   private String gameStatus;
   private long awayTeamId;
