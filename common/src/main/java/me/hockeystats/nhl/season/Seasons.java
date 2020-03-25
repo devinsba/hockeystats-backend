@@ -4,14 +4,12 @@ import com.jmethods.catatumbo.EntityManager;
 import com.jmethods.catatumbo.EntityQueryRequest;
 import com.jmethods.catatumbo.QueryResponse;
 import java.util.List;
-import reactor.core.publisher.Flux;
+import me.hockeystats.BaseRepository;
 import reactor.core.publisher.Mono;
 
-public class Seasons {
-  private final EntityManager entityManager;
-
+public class Seasons extends BaseRepository<Season> {
   public Seasons(EntityManager entityManager) {
-    this.entityManager = entityManager;
+    super(entityManager);
   }
 
   public Mono<Season> findById(long id) {
@@ -31,27 +29,5 @@ public class Seasons {
           }
           return seasons.get(0);
         });
-  }
-
-  public Flux<Season> saveAll(Flux<Season> seasons) {
-    return seasons
-        .groupBy(
-            s -> {
-              if (s.getCreatedAt() == null) {
-                return "insert";
-              } else {
-                return "update";
-              }
-            })
-        .flatMap(
-            g -> {
-              if (g.key().equals("insert")) {
-                return Flux.from(g.collectList().map(entityManager::insert))
-                    .flatMapIterable(i -> i);
-              } else {
-                return Flux.from(g.collectList().map(entityManager::update))
-                    .flatMapIterable(i -> i);
-              }
-            });
   }
 }
