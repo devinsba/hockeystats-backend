@@ -3,10 +3,12 @@ package me.hockeystats.nhl.game;
 import com.jmethods.catatumbo.Entity;
 import java.time.ZonedDateTime;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import me.hockeystats.BaseEntity;
 
 @Entity
 @Data
+@EqualsAndHashCode
 public class Game extends BaseEntity {
   long gameId;
   private String gameType;

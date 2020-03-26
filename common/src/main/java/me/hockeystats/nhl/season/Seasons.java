@@ -11,7 +11,7 @@ public class Seasons extends BaseRepository<Season, Long> {
 
   @Override
   protected Class<Season> getEntityClass() {
-    return null;
+    return Season.class;
   }
 
   @Override

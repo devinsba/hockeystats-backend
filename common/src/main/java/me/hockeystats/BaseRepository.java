@@ -1,14 +1,17 @@
 package me.hockeystats;
 
+import com.jmethods.catatumbo.DatastoreKey;
 import com.jmethods.catatumbo.EntityManager;
 import com.jmethods.catatumbo.EntityQueryRequest;
 import com.jmethods.catatumbo.QueryResponse;
 import java.util.List;
+import java.util.WeakHashMap;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 public abstract class BaseRepository<Entity extends BaseEntity, ID> {
   protected final EntityManager entityManager;
+  private final WeakHashMap<DatastoreKey, Integer> retrievedEntityHashcodeMap = new WeakHashMap<>();
 
   protected BaseRepository(EntityManager entityManager) {
     this.entityManager = entityManager;
@@ -26,7 +29,9 @@ public abstract class BaseRepository<Entity extends BaseEntity, ID> {
           } else if (entities.size() == 0) {
             return null;
           }
-          return entities.get(0);
+          Entity e = entities.get(0);
+          retrievedEntityHashcodeMap.put(e.getKey(), e.hashCode());
+          return e;
         });
   }
 
@@ -46,8 +51,17 @@ public abstract class BaseRepository<Entity extends BaseEntity, ID> {
                 return Flux.from(g.collectList().map(entityManager::insert))
                     .flatMapIterable(i -> i);
               } else {
-                return Flux.from(g.collectList().map(entityManager::update))
-                    .flatMapIterable(i -> i);
+                return g.groupBy(
+                        e -> retrievedEntityHashcodeMap.getOrDefault(e.getKey(), 0) == e.hashCode())
+                    .flatMap(
+                        gg -> {
+                          if (gg.key()) {
+                            return Flux.from(gg);
+                          } else {
+                            return Flux.from(gg.collectList().map(entityManager::update))
+                                .flatMapIterable(i -> i);
+                          }
+                        });
               }
             });
   }
