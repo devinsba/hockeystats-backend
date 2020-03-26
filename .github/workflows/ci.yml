@@ -121,3 +121,8 @@ jobs:
             --region us-east4 \
             --image gcr.io/hockeystats-me-dev/nhl-job-games:$GITHUB_SHA \
             --platform managed
+
+          gcloud run deploy nhl-job-backfill \
+            --region us-east4 \
+            --image gcr.io/hockeystats-me-dev/nhl-job-backfill:$GITHUB_SHA \
+            --platform managed
