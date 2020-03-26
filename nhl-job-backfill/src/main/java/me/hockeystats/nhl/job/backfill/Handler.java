@@ -46,7 +46,8 @@ class Handler {
             .filter(
                 s ->
                     s.getLastResultBackfillPerformedAt()
-                        .isBefore(ZonedDateTime.now().minusMonths(1)))
+                            .isBefore(ZonedDateTime.now().minusMonths(1))
+                        || LocalDate.now().isBefore(s.getSeasonEndDate().plusDays(1)))
             .elementAt(0)
             .doOnSuccess(
                 s -> {
@@ -64,7 +65,7 @@ class Handler {
             s -> {
               List<LocalDate> dates = new ArrayList<>();
               LocalDate current = s.getRegularSeasonStartDate().minusWeeks(5);
-              while (!current.isAfter(s.getSeasonEndDate())) {
+              while (!current.isAfter(s.getSeasonEndDate()) && !current.isAfter(LocalDate.now())) {
                 dates.add(current);
                 current = current.plusDays(1);
               }
@@ -80,6 +81,6 @@ class Handler {
                 throw new RuntimeException(e);
               }
             })
-        .then(ServerResponse.ok().bodyValue(season));
+        .then(ServerResponse.ok().bodyValue(season.getSeasonId()));
   }
 }
