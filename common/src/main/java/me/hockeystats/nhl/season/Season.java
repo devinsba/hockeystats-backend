@@ -1,7 +1,10 @@
 package me.hockeystats.nhl.season;
 
 import com.jmethods.catatumbo.Entity;
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import me.hockeystats.BaseEntity;
@@ -20,4 +23,7 @@ public class Season extends BaseEntity {
   Boolean conferencesInUse;
   Boolean divisionsInUse;
   Boolean wildCardInUse;
+
+  ZonedDateTime lastResultBackfillPerformedAt =
+      ZonedDateTime.ofInstant(Instant.EPOCH, ZoneOffset.UTC);
 }

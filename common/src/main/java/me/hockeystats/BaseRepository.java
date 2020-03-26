@@ -17,6 +17,37 @@ public abstract class BaseRepository<Entity extends BaseEntity, ID> {
     this.entityManager = entityManager;
   }
 
+  public final Flux<Entity> findAll() {
+    return Flux.push(
+        sink -> {
+          String query =
+              "SELECT * FROM "
+                  + getEntityClass().getSimpleName()
+                  + " ORDER BY __key__ LIMIT @limit";
+          EntityQueryRequest request = entityManager.createEntityQueryRequest(query);
+          request.setNamedBinding("limit", 25);
+
+          QueryResponse<Entity> response =
+              entityManager.executeEntityQueryRequest(getEntityClass(), request);
+          for (Entity e : response.getResults()) {
+            sink.next(e);
+          }
+
+          query = query + " OFFSET @offset";
+          request.setQuery(query);
+
+          while (response.getResults().size() > 0) {
+            request.setNamedBinding("offset", response.getEndCursor());
+
+            response = entityManager.executeEntityQueryRequest(getEntityClass(), request);
+            for (Entity e : response.getResults()) {
+              sink.next(e);
+            }
+          }
+          sink.complete();
+        });
+  }
+
   public final Mono<Entity> findById(ID id) {
     return Mono.fromCallable(
         () -> {
