@@ -9,6 +9,7 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Function;
@@ -43,10 +44,7 @@ class Handler {
     return (request ->
         seasons
             .findAll()
-            .filter(
-                s ->
-                    s.getLastResultBackfillPerformedAt()
-                        .isBefore(ZonedDateTime.now().minusMinutes(15)))
+            .sort(Comparator.comparing(Season::getLastResultBackfillPerformedAt))
             .elementAt(0)
             .log()
             .doOnSuccess(
@@ -72,7 +70,6 @@ class Handler {
               return dates;
             })
         .map(d -> PubsubMessage.newBuilder().setData(ByteString.copyFromUtf8(d.toString())).build())
-        .log()
         .map(datesToScanPublisher::publish)
         .map(
             f -> {
@@ -82,6 +79,6 @@ class Handler {
                 throw new RuntimeException(e);
               }
             })
-        .then(ServerResponse.ok().bodyValue(season.getNhlId()));
+        .then(ServerResponse.ok().bodyValue(String.format("%d\n", season.getNhlId())));
   }
 }

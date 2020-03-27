@@ -1,5 +1,6 @@
 package me.hockeystats.nhl.job.games;
 
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -67,6 +68,7 @@ class Handler {
         statsApi
             .getScheduleForDate(date.toString())
             .map(Response::body)
+            .delayElement(Duration.ofSeconds(1))
             .flatMapIterable(Schedule::getDates)
             .flatMapIterable(ScheduleDate::getGames)
             .parallel()
