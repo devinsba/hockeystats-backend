@@ -46,7 +46,7 @@ class Handler {
             .filter(
                 s ->
                     s.getLastResultBackfillPerformedAt()
-                            .isBefore(ZonedDateTime.now().minusMonths(1))
+                            .isBefore(ZonedDateTime.now().minusMinutes(15))
                         || LocalDate.now().isBefore(s.getSeasonEndDate().plusDays(1)))
             .elementAt(0)
             .log()
