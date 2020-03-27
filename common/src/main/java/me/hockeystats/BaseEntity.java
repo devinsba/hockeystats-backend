@@ -9,9 +9,11 @@ import com.jmethods.catatumbo.UpdatedTimestamp;
 import com.jmethods.catatumbo.Version;
 import java.time.ZonedDateTime;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @MappedSuperClass
 @Data
+@EqualsAndHashCode
 public abstract class BaseEntity {
   @Identifier long id;
 

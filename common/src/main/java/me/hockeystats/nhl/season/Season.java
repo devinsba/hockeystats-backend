@@ -11,7 +11,7 @@ import me.hockeystats.BaseEntity;
 
 @Entity
 @Data
-@EqualsAndHashCode
+@EqualsAndHashCode(callSuper = true)
 public class Season extends BaseEntity {
   long seasonId;
   LocalDate regularSeasonStartDate;

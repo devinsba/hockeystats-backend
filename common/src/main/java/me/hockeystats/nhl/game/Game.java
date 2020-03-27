@@ -8,7 +8,7 @@ import me.hockeystats.BaseEntity;
 
 @Entity
 @Data
-@EqualsAndHashCode
+@EqualsAndHashCode(callSuper = true)
 public class Game extends BaseEntity {
   long gameId;
   private String gameType;
