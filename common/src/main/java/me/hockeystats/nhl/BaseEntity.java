@@ -13,7 +13,7 @@ import lombok.EqualsAndHashCode;
 
 @MappedSuperClass
 @Data
-@EqualsAndHashCode
+@EqualsAndHashCode(exclude = "key")
 public abstract class BaseEntity<ID> {
   @Identifier long id;
 

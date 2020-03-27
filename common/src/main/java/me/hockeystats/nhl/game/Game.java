@@ -11,7 +11,7 @@ import me.hockeystats.nhl.season.Season;
 
 @Entity
 @Data
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = true, exclude = "parentKey")
 public class Game extends BaseEntity<Long> {
   @ParentKey private DatastoreKey parentKey;
   private Long nhlId;
