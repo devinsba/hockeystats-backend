@@ -2,7 +2,6 @@ package me.hockeystats.nhl;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
-import com.jmethods.catatumbo.DatastoreKey;
 import com.jmethods.catatumbo.EntityManager;
 import com.jmethods.catatumbo.EntityQueryRequest;
 import com.jmethods.catatumbo.QueryResponse;
@@ -16,7 +15,7 @@ import reactor.core.publisher.Mono;
 public abstract class BaseRepository<Entity extends BaseEntity<ID>, ID> {
   protected final EntityManager entityManager;
 
-  private final WeakHashMap<DatastoreKey, Integer> retrievedEntityHashcodeMap = new WeakHashMap<>();
+  private final WeakHashMap<ID, Integer> retrievedEntityHashcodeMap = new WeakHashMap<>();
   private final Cache<ID, Entity> byNhlIdCache;
 
   protected BaseRepository(EntityManager entityManager) {
@@ -37,7 +36,7 @@ public abstract class BaseRepository<Entity extends BaseEntity<ID>, ID> {
           QueryResponse<Entity> response =
               entityManager.executeEntityQueryRequest(getEntityClass(), request);
           for (Entity e : response.getResults()) {
-            retrievedEntityHashcodeMap.put(e.getKey(), e.hashCode());
+            retrievedEntityHashcodeMap.put(e.getNhlId(), e.hashCode());
             sink.next(e);
           }
 
@@ -49,7 +48,7 @@ public abstract class BaseRepository<Entity extends BaseEntity<ID>, ID> {
 
             response = entityManager.executeEntityQueryRequest(getEntityClass(), request);
             for (Entity e : response.getResults()) {
-              retrievedEntityHashcodeMap.put(e.getKey(), e.hashCode());
+              retrievedEntityHashcodeMap.put(e.getNhlId(), e.hashCode());
               sink.next(e);
             }
           }
@@ -84,7 +83,7 @@ public abstract class BaseRepository<Entity extends BaseEntity<ID>, ID> {
       return null;
     }
     Entity e = entities.get(0);
-    retrievedEntityHashcodeMap.put(e.getKey(), e.hashCode());
+    retrievedEntityHashcodeMap.put(e.getNhlId(), e.hashCode());
     return e;
   }
 
@@ -108,7 +107,9 @@ public abstract class BaseRepository<Entity extends BaseEntity<ID>, ID> {
                     .flatMapIterable(i -> i);
               } else {
                 return g.groupBy(
-                        e -> retrievedEntityHashcodeMap.getOrDefault(e.getKey(), 0) == e.hashCode())
+                        e ->
+                            retrievedEntityHashcodeMap.getOrDefault(e.getNhlId(), 0)
+                                == e.hashCode())
                     .flatMap(
                         gg -> {
                           if (gg.key()) {
