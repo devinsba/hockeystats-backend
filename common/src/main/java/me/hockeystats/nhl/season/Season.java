@@ -7,23 +7,23 @@ import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import me.hockeystats.BaseEntity;
+import me.hockeystats.nhl.BaseEntity;
 
 @Entity
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class Season extends BaseEntity {
-  long seasonId;
-  LocalDate regularSeasonStartDate;
-  LocalDate regularSeasonEndDate;
-  LocalDate seasonEndDate;
-  Integer numberOfGames;
-  Boolean tiesInUse;
-  Boolean olympicsParticipation;
-  Boolean conferencesInUse;
-  Boolean divisionsInUse;
-  Boolean wildCardInUse;
+public class Season extends BaseEntity<Long> {
+  private Long nhlId;
+  private LocalDate regularSeasonStartDate;
+  private LocalDate regularSeasonEndDate;
+  private LocalDate seasonEndDate;
+  private Integer numberOfGames;
+  private Boolean tiesInUse;
+  private Boolean olympicsParticipation;
+  private Boolean conferencesInUse;
+  private Boolean divisionsInUse;
+  private Boolean wildCardInUse;
 
-  ZonedDateTime lastResultBackfillPerformedAt =
+  private ZonedDateTime lastResultBackfillPerformedAt =
       ZonedDateTime.ofInstant(Instant.EPOCH, ZoneOffset.UTC);
 }

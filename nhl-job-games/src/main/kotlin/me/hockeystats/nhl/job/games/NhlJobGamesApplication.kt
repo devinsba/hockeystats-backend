@@ -27,6 +27,9 @@ val app = application(WebApplicationType.REACTIVE) {
             GET("/yesterday") {
                 handler.yesterday().apply(it)
             }
+            GET("/delete-all") {
+                handler.deleteAll().apply(it)
+            }
             POST("/") {
                 handler.requested().apply(it)
             }

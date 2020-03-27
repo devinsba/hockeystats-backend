@@ -31,11 +31,11 @@ class Handler {
         .flatMap(
             s ->
                 seasons
-                    .findById(Long.parseLong(s.getSeasonId()))
+                    .findByNhlId(Long.parseLong(s.getSeasonId()))
                     .defaultIfEmpty(new Season())
                     .map(
                         season -> {
-                          season.setSeasonId(Long.parseLong(s.getSeasonId()));
+                          season.setNhlId(Long.parseLong(s.getSeasonId()));
                           season.setRegularSeasonStartDate(s.getRegularSeasonStartDate());
                           season.setRegularSeasonEndDate(s.getRegularSeasonEndDate());
                           season.setSeasonEndDate(s.getSeasonEndDate());

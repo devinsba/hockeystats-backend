@@ -1,4 +1,4 @@
-package me.hockeystats;
+package me.hockeystats.nhl;
 
 import com.jmethods.catatumbo.CreatedTimestamp;
 import com.jmethods.catatumbo.DatastoreKey;
@@ -14,7 +14,7 @@ import lombok.EqualsAndHashCode;
 @MappedSuperClass
 @Data
 @EqualsAndHashCode
-public abstract class BaseEntity {
+public abstract class BaseEntity<ID> {
   @Identifier long id;
 
   @Key DatastoreKey key;
@@ -24,4 +24,6 @@ public abstract class BaseEntity {
   @UpdatedTimestamp ZonedDateTime updatedAt;
 
   @Version long version;
+
+  public abstract ID getNhlId();
 }

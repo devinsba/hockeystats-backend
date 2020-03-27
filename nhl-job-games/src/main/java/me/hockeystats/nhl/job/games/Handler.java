@@ -2,7 +2,6 @@ package me.hockeystats.nhl.job.games;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.function.Function;
 import me.hockeystats.PubSubMessage;
@@ -40,15 +39,23 @@ class Handler {
     return forDate(yesterday);
   }
 
+  Function<ServerRequest, Mono<ServerResponse>> deleteAll() {
+    return request ->
+        Mono.just(games.deleteAll())
+            .flatMap(l -> ServerResponse.ok().bodyValue(String.format("Deleted %d games", l)));
+  }
+
   Function<ServerRequest, Mono<ServerResponse>> requested() {
-      return (request -> request.bodyToMono(PubSubMessage.class)
-              .map(b -> b.getMessage().getData())
-              .map(Base64Utils::decodeFromString)
-              .map(String::new)
-              .map(LocalDate::parse)
-              .map(this::forDate)
-              .map(f -> f.apply(request))
-              .flatMap(m -> m));
+    return (request ->
+        request
+            .bodyToMono(PubSubMessage.class)
+            .map(b -> b.getMessage().getData())
+            .map(Base64Utils::decodeFromString)
+            .map(String::new)
+            .map(LocalDate::parse)
+            .map(this::forDate)
+            .map(f -> f.apply(request))
+            .flatMap(m -> m));
   }
 
   private Function<ServerRequest, Mono<ServerResponse>> forDate(LocalDate date) {
@@ -62,15 +69,16 @@ class Handler {
             .flatMap(
                 g ->
                     games
-                        .findById(g.getGamePk())
+                        .findByNhlId(g.getGamePk())
                         .defaultIfEmpty(new Game())
                         .map(
                             game -> {
-                              game.setGameId(g.getGamePk());
+                              game.setNhlId(g.getGamePk());
                               game.setGameType(g.getGameType());
                               game.setSeasonId(Long.parseLong(g.getSeason()));
                               game.setStartAt(
-                                  ZonedDateTime.ofInstant(g.getGameDate(), ZoneId.of("America/New_York")));
+                                  ZonedDateTime.ofInstant(
+                                      g.getGameDate(), ZoneId.of("America/New_York")));
                               game.setVenue(g.getVenue().getName());
                               game.setGameStatus(g.getStatus().getDetailedState());
                               game.setAwayTeamId(g.getTeams().getAway().getTeam().getId());
