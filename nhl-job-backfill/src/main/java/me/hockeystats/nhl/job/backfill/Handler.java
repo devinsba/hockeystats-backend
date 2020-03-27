@@ -81,6 +81,6 @@ class Handler {
                 throw new RuntimeException(e);
               }
             })
-        .then(ServerResponse.ok().bodyValue(season.getSeasonId()));
+        .then(ServerResponse.ok().bodyValue(season.getNhlId()));
   }
 }
