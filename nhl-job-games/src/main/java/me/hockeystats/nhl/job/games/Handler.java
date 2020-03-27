@@ -56,6 +56,7 @@ class Handler {
             .map(Base64Utils::decodeFromString)
             .map(String::new)
             .map(LocalDate::parse)
+            .log()
             .map(this::forDate)
             .map(f -> f.apply(request))
             .flatMap(m -> m));
@@ -98,6 +99,7 @@ class Handler {
                                           return game;
                                         })))
             .sequential()
+            .log()
             .transform(games::saveAll)
             .then(ServerResponse.ok().build());
   }

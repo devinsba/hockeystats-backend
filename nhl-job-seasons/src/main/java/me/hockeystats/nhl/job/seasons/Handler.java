@@ -33,6 +33,7 @@ class Handler {
                 seasons
                     .findByNhlId(Long.parseLong(s.getSeasonId()))
                     .defaultIfEmpty(new Season())
+                    .log()
                     .map(
                         season -> {
                           season.setNhlId(Long.parseLong(s.getSeasonId()));
@@ -48,6 +49,7 @@ class Handler {
                           return season;
                         }))
         .sequential()
+        .log()
         .transform(seasons::saveAll)
         .then(ServerResponse.ok().build());
   }

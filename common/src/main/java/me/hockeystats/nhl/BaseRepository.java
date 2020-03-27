@@ -8,9 +8,11 @@ import com.jmethods.catatumbo.EntityQueryRequest;
 import com.jmethods.catatumbo.QueryResponse;
 import java.util.List;
 import java.util.WeakHashMap;
+import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+@Slf4j
 public abstract class BaseRepository<Entity extends BaseEntity<ID>, ID> {
   protected final EntityManager entityManager;
 
@@ -75,7 +77,9 @@ public abstract class BaseRepository<Entity extends BaseEntity<ID>, ID> {
         entityManager.executeEntityQueryRequest(getEntityClass(), request);
     List<Entity> entities = response.getResults();
     if (entities.size() > 1) {
-      throw new IllegalStateException("Multiple entries found when only one expected");
+      entityManager.delete(entities);
+      log.warn("Multiple entries found when only one expected");
+      return null;
     } else if (entities.size() == 0) {
       return null;
     }

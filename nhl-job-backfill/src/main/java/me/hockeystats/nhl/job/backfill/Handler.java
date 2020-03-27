@@ -49,6 +49,7 @@ class Handler {
                             .isBefore(ZonedDateTime.now().minusMonths(1))
                         || LocalDate.now().isBefore(s.getSeasonEndDate().plusDays(1)))
             .elementAt(0)
+            .log()
             .doOnSuccess(
                 s -> {
                   s.setLastResultBackfillPerformedAt(
@@ -72,6 +73,7 @@ class Handler {
               return dates;
             })
         .map(d -> PubsubMessage.newBuilder().setData(ByteString.copyFromUtf8(d.toString())).build())
+        .log()
         .map(datesToScanPublisher::publish)
         .map(
             f -> {
