@@ -10,6 +10,7 @@ import me.hockeystats.nhl.api.stats.ScheduleDate;
 import me.hockeystats.nhl.api.stats.StatsApi;
 import me.hockeystats.nhl.game.Game;
 import me.hockeystats.nhl.game.Games;
+import me.hockeystats.nhl.season.Seasons;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Base64Utils;
@@ -22,11 +23,13 @@ import retrofit2.Response;
 class Handler {
   private final StatsApi statsApi;
   private final Games games;
+  private final Seasons seasons;
 
   @Autowired
-  Handler(StatsApi statsApi, Games games) {
+  Handler(StatsApi statsApi, Games games, Seasons seasons) {
     this.statsApi = statsApi;
     this.games = games;
+    this.seasons = seasons;
   }
 
   Function<ServerRequest, Mono<ServerResponse>> today() {
@@ -71,22 +74,29 @@ class Handler {
                     games
                         .findByNhlId(g.getGamePk())
                         .defaultIfEmpty(new Game())
-                        .map(
-                            game -> {
-                              game.setNhlId(g.getGamePk());
-                              game.setGameType(g.getGameType());
-                              game.setSeasonId(Long.parseLong(g.getSeason()));
-                              game.setStartAt(
-                                  ZonedDateTime.ofInstant(
-                                      g.getGameDate(), ZoneId.of("America/New_York")));
-                              game.setVenue(g.getVenue().getName());
-                              game.setGameStatus(g.getStatus().getDetailedState());
-                              game.setAwayTeamId(g.getTeams().getAway().getTeam().getId());
-                              game.setAwayScore(g.getTeams().getAway().getScore());
-                              game.setHomeTeamId(g.getTeams().getHome().getTeam().getId());
-                              game.setHomeScore(g.getTeams().getHome().getScore());
-                              return game;
-                            }))
+                        .flatMap(
+                            game ->
+                                seasons
+                                    .findByNhlId(Long.valueOf(g.getSeason()))
+                                    .map(
+                                        season -> {
+                                          game.setSeason(season);
+                                          game.setNhlId(g.getGamePk());
+                                          game.setGameType(g.getGameType());
+                                          game.setSeasonId(Long.parseLong(g.getSeason()));
+                                          game.setStartAt(
+                                              ZonedDateTime.ofInstant(
+                                                  g.getGameDate(), ZoneId.of("America/New_York")));
+                                          game.setVenue(g.getVenue().getName());
+                                          game.setGameStatus(g.getStatus().getDetailedState());
+                                          game.setAwayTeamId(
+                                              g.getTeams().getAway().getTeam().getId());
+                                          game.setAwayScore(g.getTeams().getAway().getScore());
+                                          game.setHomeTeamId(
+                                              g.getTeams().getHome().getTeam().getId());
+                                          game.setHomeScore(g.getTeams().getHome().getScore());
+                                          return game;
+                                        })))
             .sequential()
             .transform(games::saveAll)
             .then(ServerResponse.ok().build());

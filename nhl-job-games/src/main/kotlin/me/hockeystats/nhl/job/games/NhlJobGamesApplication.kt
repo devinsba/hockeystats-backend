@@ -11,7 +11,7 @@ val app = application(WebApplicationType.REACTIVE) {
     beans {
         bean<CommonConfiguration>()
         bean {
-            Handler(ref(), ref())
+            Handler(ref(), ref(), ref())
         }
     }
     listener<ApplicationReadyEvent> {
