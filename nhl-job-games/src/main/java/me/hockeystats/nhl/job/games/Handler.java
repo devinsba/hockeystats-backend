@@ -68,7 +68,7 @@ class Handler {
         statsApi
             .getScheduleForDate(date.toString())
             .map(Response::body)
-            .delayElement(Duration.ofSeconds(1))
+            .delayElement(Duration.ofSeconds(3))
             .flatMapIterable(Schedule::getDates)
             .flatMapIterable(ScheduleDate::getGames)
             .parallel()
