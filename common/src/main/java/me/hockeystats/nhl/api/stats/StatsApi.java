@@ -17,9 +17,6 @@ public interface StatsApi {
   Mono<Response<StatsRoster>> getTeamRoster(
       @Path("teamId") long teamId, @Query("season") String seasonId);
 
-  @GET("/api/v1/game/{gameId}/boxscore")
-  Mono<Response<Object>> getGameBoxScore(@Path("gameId") long gameId);
-
   @GET("/api/v1/game/{gameId}/feed/live")
-  Mono<Response<Object>> getGamePlayByPlayEvents(@Path("gameId") long gameId);
+  Mono<Response<PlayByPlayResponse>> getGamePlayByPlayEvents(@Path("gameId") long gameId);
 }
