@@ -4,8 +4,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jakewharton.retrofit2.adapter.reactor.ReactorCallAdapterFactory;
 import com.jmethods.catatumbo.EntityManager;
 import com.jmethods.catatumbo.EntityManagerFactory;
+import me.hockeystats.nhl.api.shifts.ShiftsApi;
 import me.hockeystats.nhl.api.stats.StatsApi;
 import me.hockeystats.nhl.game.Games;
+import me.hockeystats.nhl.game.Shifts;
 import me.hockeystats.nhl.season.Seasons;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.annotation.Bean;
@@ -24,6 +26,7 @@ public class CommonConfiguration
     context.registerBean(StatsApi.class, () -> nhlStatsApi(context.getBean(ObjectMapper.class)));
     context.registerBean(Games.class, () -> games(context.getBean(EntityManager.class)));
     context.registerBean(Seasons.class, () -> seasons(context.getBean(EntityManager.class)));
+    context.registerBean(Shifts.class, () -> shifts(context.getBean(EntityManager.class)));
   }
 
   @Bean
@@ -45,6 +48,18 @@ public class CommonConfiguration
   }
 
   @Bean
+  public ShiftsApi nhlShiftsApi(ObjectMapper objectMapper) {
+    Retrofit retrofit =
+        new Retrofit.Builder()
+            .baseUrl("https://api.nhle.com")
+            .addCallAdapterFactory(ReactorCallAdapterFactory.create())
+            .addConverterFactory(JacksonConverterFactory.create(objectMapper))
+            .build();
+
+    return retrofit.create(ShiftsApi.class);
+  }
+
+  @Bean
   public Seasons seasons(EntityManager entityManager) {
     return new Seasons(entityManager);
   }
@@ -52,5 +67,10 @@ public class CommonConfiguration
   @Bean
   public Games games(EntityManager entityManager) {
     return new Games(entityManager);
+  }
+
+  @Bean
+  public Shifts shifts(EntityManager entityManager) {
+    return new Shifts(entityManager);
   }
 }

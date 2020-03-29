@@ -10,6 +10,8 @@
 rootProject.name = 'hockeystats-backend'
 
 include "common"
-include "nhl-job-seasons"
-include "nhl-job-games"
 include "nhl-job-backfill"
+include "nhl-job-games"
+include "nhl-job-pbp-events"
+include "nhl-job-seasons"
+include "nhl-job-shifts"
