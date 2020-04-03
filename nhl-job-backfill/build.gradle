@@ -31,7 +31,7 @@ dependencies {
     implementation(project(":common"))
     implementation("com.squareup.retrofit2:retrofit:2.6.2")
     implementation("com.google.cloud:google-cloud-core:1.93.3")
-    implementation("com.google.cloud:google-cloud-pubsub:1.103.1")
+    implementation("com.google.cloud:google-cloud-pubsub:1.104.0")
 
     compileOnly("org.projectlombok:lombok")
     annotationProcessor("org.projectlombok:lombok")
