@@ -23,6 +23,7 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 11
+
       - uses: actions/cache@v1
         name: Gradle Dependencies Cache
         with:
@@ -30,6 +31,7 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
+
       - uses: actions/cache@v1
         name: Gradle Wrapper Cache
         with:
