@@ -48,17 +48,17 @@ jobs:
       - if: github.event_name == 'push'
         name: Push image to Github
         run: |
-          IMAGE_ID=docker.pkg.github.com/devinsba/hockeystats-backend/nhl-job-seasons
+          IMAGE_ID=docker.pkg.github.com/hockeystats-me/hockeystats-backend/nhl-job-seasons
 
           docker tag $IMAGE_ID $IMAGE_ID:$GITHUB_SHA
           docker push $IMAGE_ID:$GITHUB_SHA
 
-          IMAGE_ID=docker.pkg.github.com/devinsba/hockeystats-backend/nhl-job-games
+          IMAGE_ID=docker.pkg.github.com/hockeystats-me/hockeystats-backend/nhl-job-games
 
           docker tag $IMAGE_ID $IMAGE_ID:$GITHUB_SHA
           docker push $IMAGE_ID:$GITHUB_SHA
 
-          IMAGE_ID=docker.pkg.github.com/devinsba/hockeystats-backend/nhl-job-backfill
+          IMAGE_ID=docker.pkg.github.com/hockeystats-me/hockeystats-backend/nhl-job-backfill
 
           docker tag $IMAGE_ID $IMAGE_ID:$GITHUB_SHA
           docker push $IMAGE_ID:$GITHUB_SHA
@@ -94,17 +94,17 @@ jobs:
 
       - name: Copy images to GCR
         run: |
-          IMAGE_ID=docker.pkg.github.com/devinsba/hockeystats-backend/nhl-job-seasons
+          IMAGE_ID=docker.pkg.github.com/hockeystats-me/hockeystats-backend/nhl-job-seasons
           docker pull $IMAGE_ID:$GITHUB_SHA
           docker tag $IMAGE_ID:$GITHUB_SHA gcr.io/hockeystats-me-dev/nhl-job-seasons:$GITHUB_SHA
           docker push gcr.io/hockeystats-me-dev/nhl-job-seasons:$GITHUB_SHA
 
-          IMAGE_ID=docker.pkg.github.com/devinsba/hockeystats-backend/nhl-job-games
+          IMAGE_ID=docker.pkg.github.com/hockeystats-me/hockeystats-backend/nhl-job-games
           docker pull $IMAGE_ID:$GITHUB_SHA
           docker tag $IMAGE_ID:$GITHUB_SHA gcr.io/hockeystats-me-dev/nhl-job-games:$GITHUB_SHA
           docker push gcr.io/hockeystats-me-dev/nhl-job-games:$GITHUB_SHA
 
-          IMAGE_ID=docker.pkg.github.com/devinsba/hockeystats-backend/nhl-job-backfill
+          IMAGE_ID=docker.pkg.github.com/hockeystats-me/hockeystats-backend/nhl-job-backfill
           docker pull $IMAGE_ID:$GITHUB_SHA
           docker tag $IMAGE_ID:$GITHUB_SHA gcr.io/hockeystats-me-dev/nhl-job-backfill:$GITHUB_SHA
           docker push gcr.io/hockeystats-me-dev/nhl-job-backfill:$GITHUB_SHA
